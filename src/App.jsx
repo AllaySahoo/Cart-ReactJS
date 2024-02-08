@@ -1,40 +1,37 @@
-
-import { useState } from 'react'
-import './App.css'
+import React, { useState } from 'react';
 
 function App() {
+  const [cartList, setCartList] = useState([]);
+  const [newGrocery, setNewGrocery] = useState({ groceryName: '', quantity: 0 });
 
-  const [groceryList , setGroceryList] = useState([]);
-
-  function getUserInputForBread(){
-    var breadCount = document.getElementById("breadInput").value; //replce it with event , we never use getElementById in React
-    setUserInputForBread(breadCount);
-  }
-
-  function setUserInputForBread(breadCount){
-
-    const newGrocery = {
-      groceryname : "Bread",
-      quantity :  breadCount
-    };
-    addBreadToList(newGrocery);
-  }
-
-  function addBreadToList(newGrocery){
-    setGroceryList([...groceryList , newGrocery]);
-    console.log(groceryList);
-  }
+  const itemList = ["Bread", "Milk"];
 
   return (
-    <>
-      <h2>Grocery Mart</h2>
-      <div>
-        <ol>          
-          <li>Bread <input type="text" id='breadInput'/> <button onClick={getUserInputForBread}> Add </button></li>
-        </ol>
-      </div>
-    </>
-  )
+    <div>
+      {itemList.map((item) => (
+        <li>{item}<input
+            type="number"
+            onChange={(e) => {
+              setNewGrocery({  //change name
+                groceryName: item,
+                quantity: e.target.value
+              });
+            }}
+          />
+          <button onClick={() => setCartList([...cartList, newGrocery])}>
+            Add To Cart
+          </button>
+        </li>
+      ))}
+      <ul>
+        {cartList.map((item, index) => (
+          <li key={index}>
+            {item.groceryName}: {item.quantity}
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
 }
 
-export default App
+export default App;

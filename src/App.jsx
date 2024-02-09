@@ -1,22 +1,17 @@
 import React, { useState } from 'react';
 
-function App() {
-
-  const [clickedItemIndex, setClickedItemIndex] = useState(null);
-  const [cart , setCart] = useState([]);
-  const itemList = ['Bread', 'Milk', 'Butter', 'Jam', 'Egg'];
+function Product(props){
 
   var cartItem = {name :'',quantity:0};
 
-  function handleChange(e,item)
+  function handleUserInputChange(e,item)
   {
       cartItem.name = item; 
       cartItem.quantity = Number(e.target.value);
-      console.log(cartItem);
   }
 
   function handleAddToCart() {
-    const updatedCart = [...cart]; 
+    const updatedCart = [...props.cart]; 
     const existingItemIndex = updatedCart.findIndex(
       (item) => item.name === cartItem.name
     );
@@ -27,25 +22,67 @@ function App() {
       updatedCart.push(cartItem);
     }
   
-    setCart(updatedCart); 
-    console.log(updatedCart); 
+    props.setCart(updatedCart);  
   }
 
-  return (
+  return( 
     <div>
-      {itemList.map((item, index) => (
-        <div key={index}>
-          <li onClick={() => setClickedItemIndex(index)}>
-            {item}
+        {props.itemList.map((item, index) => (
+          <div key={index}>
+            <li onClick={() => props.setClickedItemIndex(index)}>
+              {item}
+            </li>
+            {props.clickedItemIndex === index && (
+              <div>
+                <input type="number" onChange={(e)=>handleUserInputChange(e,item)}/>
+                <button onClick={handleAddToCart}>Add To Cart</button>
+              </div>
+            )}
+          </div>
+        ))}
+    </div>
+  );
+}
+
+function ViewCart(props){
+
+  const [cartVisibility , setCartVisibility] = useState(false);
+
+  function handleViewCart(){
+    props.setClickedItemIndex(null);
+    setCartVisibility(!cartVisibility);
+  }
+
+  return(
+    <div>
+        <button onClick={handleViewCart}>View Cart</button>
+        {cartVisibility && props.cart.map((item,index) => (<div>
+          <br />
+          <li>
+            {index + 1} : {item.name} : {item.quantity}
           </li>
-          {clickedItemIndex === index && (
-            <div>
-              <input type="number" onChange={(e)=>handleChange(e,item)}/>
-              <button onClick={handleAddToCart}>Add To Cart</button>
-            </div>
-          )}
-        </div>
-      ))}
+        </div>))}
+    </div>
+  );
+}
+
+function App() {
+
+  const [clickedItemIndex, setClickedItemIndex] = useState(null);
+  const [cart , setCart] = useState([]);  
+  const itemList = ['Bread', 'Milk', 'Butter', 'Jam', 'Egg'];  
+
+  return (
+    <div id="flexContainer">
+      <div>
+        <h2>Product List</h2>
+        <hr /><br />
+        <Product itemList = {itemList} clickedItemIndex = {clickedItemIndex} setClickedItemIndex = {setClickedItemIndex} cart = {cart} setCart = {setCart}/>
+      </div>
+      <div>
+        <br /><br />
+        <ViewCart cart = {cart} setClickedItemIndex = {setClickedItemIndex}/>
+      </div>
     </div>
   );
 }

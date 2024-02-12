@@ -26,7 +26,7 @@ function Product(props){
   }
 
   return( 
-    <div>
+    <>
         {props.itemList.map((item, index) => (
           <div key={index}>
             <li onClick={() => props.setClickedItemIndex(index)}>
@@ -40,31 +40,40 @@ function Product(props){
             )}
           </div>
         ))}
-    </div>
+    </>
   );
 }
 
-function ViewCart(props){
+function ViewCart(props) {
+  const [cartVisibility, setCartVisibility] = useState(false);
 
-  const [cartVisibility , setCartVisibility] = useState(false);
+  const handleDeleteCartItem = (index) => {
+    const updateCart = [...props.cart];
+    updateCart.splice(index, 1);
+    props.setCart(updateCart);
+  };
 
-  function handleViewCart(){
+  const handleViewCart = () => {
     props.setClickedItemIndex(null);
     setCartVisibility(!cartVisibility);
-  }
+  };
 
-  return(
+  return (
     <div>
-        <button onClick={handleViewCart}>View Cart</button>
-        {cartVisibility && props.cart.map((item,index) => (<div>
+      <button onClick={handleViewCart}>View Cart</button>
+      {cartVisibility && props.cart.map((item, index) => (
+        <div key={index}>
           <br />
           <li>
             {index + 1} : {item.name} : {item.quantity}
+            <button onClick={() => handleDeleteCartItem(index)}>Delete</button>
           </li>
-        </div>))}
+        </div>
+      ))}
     </div>
   );
 }
+
 
 function App() {
 
@@ -81,7 +90,7 @@ function App() {
       </div>
       <div>
         <br /><br />
-        <ViewCart cart = {cart} setClickedItemIndex = {setClickedItemIndex}/>
+        <ViewCart cart = {cart} setCart = {setCart} setClickedItemIndex = {setClickedItemIndex}/>
       </div>
     </div>
   );
